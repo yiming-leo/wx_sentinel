@@ -1,0 +1,38 @@
+{
+    "bot_name": "rm -rf",
+    "default_reply": "麻烦稍等一下，正在处理",
+    "delay_seconds": 20,
+    "reply_only_on_at": true,
+    "rules": [
+        {
+            "keywords": ["一下", "是自动的"],
+            "match_mode": "any",
+            "reply": "是的，这是一条机器发送的消息 🤖"
+        },
+        {
+            "keywords": ["天气"],
+            "match_mode": "any",
+            "reply": "今天天气不错 ☀️"
+        },
+        {
+            "keywords": ["吃", "晚上"],
+            "match_mode": "all",
+            "reply": "晚上吃韩式烤肉"
+        },
+        {
+            "keywords": ["吃", "推荐"],
+            "match_mode": "all",
+            "reply": "上海IFC国金中心有一家西餐厅"
+        },
+        {
+            "keywords": ["英语"],
+            "match_mode": "all",
+            "reply": "有个孟加拉人"
+        },
+        {
+            "keywords": ["吃", "衣服"],
+            "match_mode": "any",
+            "reply": "上海恒隆广场和SKP都是卖衣服的地方"
+        }
+    ]
+}
