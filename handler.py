@@ -32,6 +32,8 @@ class KeywordReplyHandler:
     def __init__(self, wx_client, rule_engine: RuleEngine):
         self.wx = wx_client
         self.engine = rule_engine
+        self._last_reply_time = {}      # 记录每个群最后一次回复时间
+        self._cooldown = 60             # 冷却秒数（可从配置读取）
 
     def set_action_emitter(self, emitter):
         self.emitter = emitter
@@ -45,11 +47,28 @@ class KeywordReplyHandler:
             return True
         return bot_name in content
 
+    def _is_in_cooldown(self, group: str) -> bool:
+        """检查该群是否在冷却中"""
+        last_time = self._last_reply_time.get(group, 0)
+        elapsed = time.time() - last_time
+        if elapsed < self._cooldown:
+            logger.debug(f"[{group}] 冷却中 ({elapsed:.0f}s/{self._cooldown}s)，跳过")
+            return True
+        return False
+
+    def _update_cooldown(self, group: str):
+        """更新最后一次回复时间"""
+        self._last_reply_time[group] = time.time()
+
     def handle(self, event):
         group = event.group
         content = event.content
 
         logger.info(f"[{group}] {content}")
+
+        # 检查冷却
+        if self._is_in_cooldown(group):
+            return
 
         if self.engine.config.get("reply_only_on_at", True):
             if not self._is_at_me(content):
@@ -62,6 +81,9 @@ class KeywordReplyHandler:
             logger.debug(f"无匹配规则，跳过: {content}")
             return
 
+        # 标记冷却（发送前就先锁上，防止并发）
+        self._update_cooldown(group)
+
         delay = self.engine.config.get("delay_seconds", 0)
         logger.info(f"匹配成功，{delay}秒后回复: {reply_text}")
 
@@ -73,5 +95,7 @@ class KeywordReplyHandler:
                 logger.info(f"已发送到 {group}: {text}")
             except Exception as e:
                 logger.error(f"发送失败: {e}")
+                # 发送失败时取消冷却，允许重试
+                self._last_reply_time.pop(group, None)
 
         threading.Thread(target=delayed_reply, args=(reply_text,), daemon=True).start()
