@@ -2,6 +2,7 @@
 微信消息处理器模块
 包含：规则匹配引擎 + 消息回复Handler
 """
+import random
 import time
 import threading
 from tools.logger import get_logger
@@ -25,7 +26,12 @@ class RuleEngine:
                 if any(kw in content for kw in keywords):
                     return rule["reply"]
 
-        return self.config.get("default_reply", "")
+        # 默认回复：支持字符串或列表
+        default = self.config.get("default_reply", "")
+        if isinstance(default, list) and default:
+            # ✅ 随机抽取一个元素
+            return random.choice(default)
+        return default
 
 
 class KeywordReplyHandler:

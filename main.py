@@ -12,7 +12,7 @@ switch_to_english_keyboard()
 logger.info("输入法已切换为英文键盘")
 
 # ============ 规则加载 ============
-RULES_PATH = os.path.join(os.path.dirname(__file__), "rules", "family_rules.json")
+RULES_PATH = os.path.join(os.path.dirname(__file__), "rules", "prod_rules.json")
 ruler = RuleLoader(RULES_PATH)
 rule_config = ruler.config
 
@@ -22,9 +22,11 @@ logger.info(f"配置加载完成: 群数={len(groups)}, 规则数={len(rule_conf
 
 ruler.start_watch()
 
+
 # ============ 程序退出时清理 ============
 def cleanup():
     logger.info("程序退出")
+
 
 atexit.register(cleanup)
 

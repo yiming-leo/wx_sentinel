@@ -1,0 +1,13 @@
+{
+  "bot_name": "rm -rf",
+  "groups": [
+    "模拟DS E-LOG试运行问题反馈群",
+    "模拟A * FOL RMS service",
+    "模拟TEST RMS&E-LOG 试用问题反馈群"
+  ],
+  "default_reply": ["稍等", "稍等一下", "正在处理", "麻烦稍等", "麻烦稍等一下", "麻烦稍等一下，正在处理"],
+  "cooldown_seconds": 24,
+  "delay_range": [6, 30],
+  "reply_only_on_at": true,
+  "rules": []
+}
